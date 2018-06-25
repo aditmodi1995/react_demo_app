@@ -1,0 +1,20 @@
+.employee-form{
+  display: block;
+  width: 500px;
+  border: 1px solid black;
+  padding: 20px;
+  margin-left: 35%;
+}
+
+.form-label{
+  display: inline-block;
+  width: 100px;
+  height: 70px;
+}
+
+.error-message{
+  font-size: 15px;
+  text-align: center;
+  color: red;
+  margin-top: -45px;
+}
