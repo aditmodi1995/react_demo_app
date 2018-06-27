@@ -11,7 +11,7 @@ export default class SelectInput extends Component{
     });
     return(
       <div><span className = "form-label">{this.props.label} : </span>
-        <select className="form-input" name={this.props.name} onChange={this.props.onSelectChange} ref={this.props.refs}>
+        <select className="form-input" name={this.props.name} onChange={this.props.onSelectChange}>
           {option}
         </select>
       </div>

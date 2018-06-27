@@ -4,6 +4,7 @@ import SelectInput from './selectInput';
 import { createPost } from '../actions/postAction';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 class Form extends Component {
 
@@ -26,16 +27,16 @@ class Form extends Component {
   onChange = (e) => {
     switch(e.target.name){
       case 'name':
-        this.valid_name = this.validate(/^[A-Za-z0-9]+$/i, e.target.value);
+        this.valid_name = this.validate(/^[A-Za-z0-9]+$/i, e.target.value) && e.target.value.length != 0;
         break;
       case 'emp_id':
-        this.valid_emp_id = this.validate(/^[A-Za-z0-9]+$/i, e.target.value);
+        this.valid_emp_id = this.validate(/^[A-Za-z0-9]+$/i, e.target.value) && e.target.value.length != 0;
         break;
       case 'phone':
-        this.valid_phone = this.validate(/^[0-9]+$/i, e.target.value);
+        this.valid_phone = this.validate(/^[0-9]+$/i, e.target.value) && e.target.value != 0;
         break;
       case 'age':
-        this.valid_age = this.validate(/^[0-9]+$/i, e.target.value);
+        this.valid_age = this.validate(/^[0-9]+$/i, e.target.value) && e.target.value != 0;
         break;
       default:
         break;
@@ -53,32 +54,27 @@ class Form extends Component {
   onSubmit = (e) => {
     e.preventDefault();
 
-    let postData = {
-      name: this.state.name,
-      emp_id: this.state.emp_id,
-      dept: this.state.dept,
-      gender: this.state.gender,
-      age: this.state.age,
-      phone: this.state.phone
-    }
-    this.props.createPost(postData);
+    // if(this.valid_name && this.valid_age && this.valid_emp_id && this.valid_phone){
+      let postData = {
+        name: this.state.name,
+        emp_id: this.state.emp_id,
+        dept: this.state.dept,
+        gender: this.state.gender,
+        age: this.state.age,
+        phone: this.state.phone
+      }
+  
+      this.props.createPost(postData);
+      // window.location.href = '/show';
+    // }
+
   }
 
   render(){
-    // const dept_options = [
-    //   { display_name: 'Software', value: 'software' },
-    //   { display_name: 'Business Anlalyst', value: 'ba' },
-    //   { display_name: 'Businees Development', value: 'bd' },
-    // ];
-    // const gender_options = [
-    //   { display_name: 'Male', value: 'male' },
-    //   { display_name: 'Female', value: 'female' },
-    //   { display_name: 'Other', value: 'other' },
-    // ]
     const dept_options = ['Software', 'Business_Analyst', 'Business_Developer'];
     const gender_options = ['Male', 'Female', 'Other'];
     return(
-      <div className="employee-form">
+      <form className="employee-form">
         <Input
           label='Name' type='text' name='name'
           value={this.state.name}
@@ -116,7 +112,7 @@ class Form extends Component {
           onSelectChange={this.onChange}
         />
         <button className="btn btn-warning" onClick={this.onSubmit}>Submit</button>
-      </div>
+      </form>
     )
   }
 }

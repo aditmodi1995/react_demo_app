@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Input from './input';
 import SelectInput from './selectInput';
 import { connect } from 'react-redux';
-import { fetchPost } from '../actions/postAction';
+import { fetchPost, editPost } from '../actions/postAction';
 
 class EditForm extends Component{
 
@@ -12,11 +12,13 @@ class EditForm extends Component{
     this.valid_phone = true;
     this.valid_age = true;
     this.valid_emp_id = true;
+    this.dept_options = ['Software', 'Business_Analyst', 'Business_Developer'];
+    this.gender_options = ['Male', 'Female', 'Other'];
     this.state = {
       showForm: false,
-      id: '',
-      name: '',
-      emp_id: '',
+      id: 'id',
+      name: 'name',
+      emp_id: 'emp_id',
       age: 0,
       dept: 'software',
       phone: 0,
@@ -25,48 +27,109 @@ class EditForm extends Component{
   }
 
   componentWillReceiveProps(nextProps){
-    this.setState({
-      name: nextProps.posts.name,
-      emp_id: nextProps.posts.emp_id,
-      age: nextProps.posts.age,
-      dept: nextProps.posts.dept,
-      phone: nextProps.posts.phone,
-      gender: nextProps.posts.gender
-    })
+
+    if (nextProps.posts !== this.props.posts){
+      this.updateOptions(nextProps.posts.dept, nextProps.posts.gender);
+      console.log('dept:', this.dept_options, 'gender:', this.gender_options);
+      this.setState({
+        name: nextProps.posts.name,
+        emp_id: nextProps.posts.emp_id,
+        age: nextProps.posts.age,
+        dept: nextProps.posts.dept,
+        phone: nextProps.posts.phone,
+        gender: nextProps.posts.gender
+      });
+    }
+  }
+
+  updateOptions = (dept, gender) => {
+    if(dept != undefined && gender != undefined){
+      let arr1 = [];
+      let arr2 = [];
+  
+      this.dept_options.forEach((item, i) => {
+        arr1[0] = dept;
+        if(item != dept){
+          arr1.push(item);
+        }
+      })
+  
+      this.gender_options.forEach((item, i) => {
+        arr2[0] = gender;
+        if(item != gender){
+          arr2.push(item);
+        }
+      })
+  
+      this.dept_options = arr1;
+      this.gender_options = arr2;
+  
+      return;
+    }
   }
 
   onClick = () => {
-    this.props.fetchPost(this.state.id, (res) => {
-        console.log('res:', res);
-      });
+    this.props.fetchPost(this.state.id);
 
-    console.log('asdasdasd:', this.props.posts);
     this.setState({
       showForm: true
     })
   }
 
   onChange = (e) => {
+    switch(e.target.name){
+      case 'name':
+        this.valid_name = this.validate(/^[A-Za-z0-9]+$/i, e.target.value) && e.target.value.length != 0;
+        break;
+      case 'emp_id':
+        this.valid_emp_id = this.validate(/^[A-Za-z0-9]+$/i, e.target.value) && e.target.value.length != 0;
+        break;
+      case 'phone':
+        this.valid_phone = this.validate(/^[0-9]+$/i, e.target.value) && e.target.value != 0;
+        break;
+      case 'age':
+        this.valid_age = this.validate(/^[0-9]+$/i, e.target.value) && e.target.value != 0;;
+        break;
+      default:
+        break;
+    }
+    
     this.setState({
       [e.target.name]: e.target.value
     })
   }
 
+  validate = (regex, text) =>{
+    return regex.test(text);
+  }
+
+  onSubmit = (e) => {
+    e.preventDefault();
+
+    let postData = {
+      name: this.state.name,
+      emp_id: this.state.emp_id,
+      dept: this.state.dept,
+      gender: this.state.gender,
+      age: this.state.age,
+      phone: this.state.phone
+    }
+
+    this.props.editPost(postData, this.state.emp_id);
+
+    this.setState({
+      showForm: false,
+      id: 'id',
+      name: 'name',
+      emp_id: 'emp_id',
+      age: 0,
+      dept: 'software',
+      phone: 0,
+      gender: 'male'
+    })
+  }
+
   renderForm = () => {
-    console.log('form details:', this.props.posts);
-    // const dept_options = [
-    //   { display_name: 'Software', value: 'software' },
-    //   { display_name: 'Business Anlalyst', value: 'ba' },
-    //   { display_name: 'Businees Development', value: 'bd' }
-    // ];
-    // const gender_options = [
-    //   { display_name: 'Male', value: 'male' },
-    //   { display_name: 'Female', value: 'female' },
-    //   { display_name: 'Other', value: 'other' }
-    // ];
-    // const form = this.props.posts;
-    const dept_options = ['Software', 'Business_Analyst', 'Business_Developer'];
-    const gender_options = ['Male', 'Female', 'Other'];
     return(
       <div>
         <form>
@@ -90,8 +153,7 @@ class EditForm extends Component{
           />
           <SelectInput
             label='Department' name='dept'
-            options={dept_options}
-            value={this.state.dept}
+            options={this.dept_options}
             onSelectChange={this.onChange}
           />
           <Input
@@ -102,8 +164,7 @@ class EditForm extends Component{
           />
           <SelectInput
             name='gender' label='Gender'
-            options={gender_options}
-            value={this.state.gender}
+            options={this.gender_options}
             onSelectChange={this.onChange}
           />
           <button className="btn btn-warning" onClick={this.onSubmit}>Submit</button>
@@ -138,4 +199,4 @@ const MapStateToProps = state => ({
     posts: state.posts.item
   });
 
-export default connect(MapStateToProps, { fetchPost })(EditForm);
+export default connect(MapStateToProps, { fetchPost, editPost })(EditForm);

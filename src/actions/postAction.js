@@ -11,22 +11,24 @@ export const fetchPosts = () => dispatch => {
 }
 
 export const createPost = postData => dispatch => {
-  console.log('called');
+
   fetch(`${Config.address}/post`, {
     method: 'POST',
     headers:{
-      'content-type': 'application/x-www-form-urlencoded'
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify(postData)
   })
-  .then(post => dispatch({
+  .then((post) => {
+    console.log('post:', post);
+    dispatch({
     type: NEW_POST,
     payload: post
-  }))
+  })
+  })
 }
 
 export const fetchPost = id => dispatch => {
-  console.log('callled');
   fetch(`${Config.address}/getForm/${id}`)
     .then(res => res.json())
     .then(post => dispatch({
@@ -39,7 +41,7 @@ export const editPost = (postData, id) => dispatch => {
   fetch(`${Config.address}/editForm/${id}`, {
     method: 'POST',
     headers: {
-      'content-type': 'application/x-www-form-urlencoded'
+      'content-type': 'application/json'
     },
     body: JSON.stringify(postData)
   })

@@ -13,9 +13,7 @@ export default class Input extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { validate } = this.props;
-    console.log('validate:', validate, ':', nextProps);
     if(nextProps.validate === false){
-      console.log('validate:', validate, ':', nextProps);
       this.setState({
         errorVisible: true
       });
