@@ -10,7 +10,7 @@ export const fetchPosts = () => dispatch => {
     }));
 }
 
-export const createPost = postData => dispatch => {
+export const createPost = (postData) => async(dispatch) => {
 
   fetch(`${Config.address}/post`, {
     method: 'POST',
@@ -20,12 +20,13 @@ export const createPost = postData => dispatch => {
     body: JSON.stringify(postData)
   })
   .then((post) => {
-    console.log('post:', post);
+    console.log('post:', post.json());
     dispatch({
-    type: NEW_POST,
-    payload: post
+      type: NEW_POST,
+      payload: post
+    })
   })
-  })
+  .then(post => post.json())
 }
 
 export const fetchPost = id => dispatch => {
